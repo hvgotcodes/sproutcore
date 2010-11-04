@@ -140,7 +140,9 @@ SC.WebSQLImageStore = SC.ImageStore.extend(
           },
           that._errorHandler
         );
-      }, this._transactionErrorHandler);
+      }, function(error) {
+        that._transactionErrorHandler.call(that, error, target, callback);
+      });
     });
     
     return YES;
@@ -215,8 +217,9 @@ SC.WebSQLImageStore = SC.ImageStore.extend(
     return false;
   },
   
-  _transactionErrorHandler: function(error) {
+  _transactionErrorHandler: function(error, target, callback) {
     SC.Logger.error('Transaction error: %@ (code %@)'.fmt(error.message, error.code));
+    if (typeof callback === SC.T_FUNCTION) callback.call(target, error);
     return false;
   },
   
