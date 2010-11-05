@@ -186,7 +186,7 @@ SC.WebSQLImageStore = SC.ImageStore.extend(
     if (db) return db;
     
     try {
-      db = window.openDatabase('SCImageStore', '1.5', 'SCIS', 65536);
+      db = window.openDatabase('SCImageStore', '1.5', 'SCIS', 2000000);
     } catch (e) {
       console.error(e);
     }
