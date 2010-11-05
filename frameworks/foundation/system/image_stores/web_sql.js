@@ -219,7 +219,7 @@ SC.WebSQLImageStore = SC.ImageStore.extend(
   
   _transactionErrorHandler: function(error, target, callback) {
     SC.Logger.error('Transaction error: %@ (code %@)'.fmt(error.message, error.code));
-    if (typeof callback === SC.T_FUNCTION) callback.call(target, error);
+    if (typeof callback === SC.T_FUNCTION) callback.call(target, SC.$error(error.message, "Transaction Error", error.code));
     return false;
   },
   
