@@ -17,21 +17,21 @@ SC.BaseTheme.renderers.CanvasImage = SC.Renderer.extend({
   render: function(context) {
     context.attr('width', this.width);
     context.attr('height', this.height);
+    
+    this.resetChanges();
   },
   
   update: function() {
-    var cq = this.$(),
-        elem = cq[0],
+    var elem = this.$()[0],
         value = this.value,
         context;
     
-    if (elem && elem.getContext) {
+    if (this.didChange('value') && elem && elem.getContext) {
       context = elem.getContext('2d');
-      
-      if (value) {
-        context.drawImage(value, 0, 0, value.width, value.height, 0, 0, this.width, this.height);
-      }
+      context.drawImage(value, 0, 0, value.width, value.height, 0, 0, this.width, this.height);
     }
+    
+    this.resetChanges();
   }
 });
 
