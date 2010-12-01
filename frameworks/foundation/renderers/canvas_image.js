@@ -24,15 +24,58 @@ SC.BaseTheme.renderers.CanvasImage = SC.Renderer.extend({
   update: function() {
     var elem = this.$()[0],
         value = this.value,
-        context;
+        frame, context;
+    
+    if (this.didChange('height')) elem.height = this.height || 0;
+    if (this.didChange('width')) elem.width = this.width || 0;
     
     if (this.didChange('value') && elem && elem.getContext) {
       context = elem.getContext('2d');
-      context.drawImage(value, 0, 0, value.width, value.height, 0, 0, this.width, this.height);
+      
+      context.clearRect(0, 0, this.width, this.height);
+      
+      if (this.backgroundColor) {
+        context.fillStyle = this.backgroundColor;
+        context.fillRect(0, 0, this.width, this.height);
+      }
+      
+      frame = this.calculateFitFrame(this.fit, value.width, value.height);
+      context.drawImage(value, 0, 0, value.width, value.height, frame.x, frame.y, frame.width, frame.height);
     }
     
     this.resetChanges();
+  },
+  
+  calculateFitFrame: function(fit, width, height) {
+    var containerWidth = this.width,
+        containerHeight = this.height,
+        result = {x: 0, y: 0, width: containerWidth, height: containerHeight},
+        scaleX, scaleY, scale;
+    
+    // fast path
+    if (fit === SC.FILL) return result;
+    
+    scaleX = containerWidth / width;
+    scaleY = containerHeight / height;
+    scale = scaleX < scaleY ? scaleX : scaleY;
+    
+    if (fit === SC.FIT_WIDTH) {
+      scale = scaleX;
+    } else if (fit === SC.FIT_HEIGHT) {
+      scale = scaleY;
+    }
+    
+    width *= scale;
+    result.width = width;
+    result.x = (containerWidth / 2) - (width / 2);
+    
+    height *= scale;
+    result.height = height;
+    result.y = (containerHeight / 2) - (height / 2);
+    
+    return result;
   }
+
 });
 
 SC.BaseTheme.renderers.canvasImage = SC.BaseTheme.renderers.CanvasImage.create();

@@ -10,6 +10,11 @@ sc_require('views/view');
 sc_require('mixins/control');
 sc_require('system/image_stores/web_sql');
 
+SC.FILL = "fill";
+SC.BEST_FIT = "bestFit";
+SC.FIT_WIDTH = "fitWidth";
+SC.FIT_HEIGHT = "fitHeight";
+
 SC.IMAGE_STATE_NONE = 'none';
 SC.IMAGE_STATE_LOADING = 'loading';
 SC.IMAGE_STATE_LOADED = 'loaded';
@@ -70,6 +75,15 @@ SC.ImageView = SC.View.extend(SC.Control,
     always be treated as a background image.
   */
   canLoadInBackground: NO,
+  
+  /**
+    Determines how the image will fit into its containing space. Possible
+    values: SC.FILL, SC.BEST_FIT, SC.FIT_WIDTH, SC.FIT_HEIGHT.
+    
+    @property {String}
+    @default SC.FILL
+  */
+  fit: SC.FILL,
   
   /**
     @property {Image}
@@ -222,9 +236,11 @@ SC.ImageView = SC.View.extend(SC.Control,
     var frame = this.get('frame');
     
     renderer.attr({
-      height: frame.height,
+      backgroundColor: this.get('backgroundColor'),
+      fit: this.get('fit'),
+      height: frame ? frame.height : 0,
       value: this.get('image'),
-      width: frame.width
+      width: frame ? frame.width : 0
     });
   },
   
