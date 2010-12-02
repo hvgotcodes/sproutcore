@@ -274,8 +274,10 @@ SC.ImageView = SC.View.extend(SC.Control,
       
       if (type === SC.IMAGE_TYPE_URL) {
         if (this.get('wantsImageStored') && SC.ImageView.store && SC.ImageView.store.isImageStore) {
+          this.set('image', SC.BLANK_IMAGE);
           SC.ImageView.store.load(value, this, this._storedImageDidLoad);
         } else if (this.get('useImageQueue')) {
+          this.set('image', SC.BLANK_IMAGE);
           this._loadImage();
         } else {
           image = new Image();
@@ -283,6 +285,7 @@ SC.ImageView = SC.View.extend(SC.Control,
           this.didLoad(image);
         }
       } else {
+        image = SC.BLANK_IMAGE;
         this.didLoad(image);
       }
     }
