@@ -26,21 +26,23 @@ SC.BaseTheme.renderers.CanvasImage = SC.Renderer.extend({
         value = this.value,
         frame, context;
     
-    if (this.didChange('height')) elem.height = this.height || 0;
-    if (this.didChange('width')) elem.width = this.width || 0;
-    
-    if (this.didChange('value') && elem && elem.getContext) {
-      context = elem.getContext('2d');
+    if (elem && elem.getContext) {
+      if (this.didChange('height')) elem.height = this.height || 0;
+      if (this.didChange('width')) elem.width = this.width || 0;
       
-      context.clearRect(0, 0, this.width, this.height);
-      
-      if (this.backgroundColor) {
-        context.fillStyle = this.backgroundColor;
-        context.fillRect(0, 0, this.width, this.height);
+      if (this.didChange('value')) {
+        context = elem.getContext('2d');
+        
+        context.clearRect(0, 0, this.width, this.height);
+        
+        if (this.backgroundColor) {
+          context.fillStyle = this.backgroundColor;
+          context.fillRect(0, 0, this.width, this.height);
+        }
+        
+        frame = this.calculateFitFrame(this.fit, value.width, value.height);
+        context.drawImage(value, 0, 0, value.width, value.height, frame.x, frame.y, frame.width, frame.height);
       }
-      
-      frame = this.calculateFitFrame(this.fit, value.width, value.height);
-      context.drawImage(value, 0, 0, value.width, value.height, frame.x, frame.y, frame.width, frame.height);
     }
     
     this.resetChanges();
