@@ -193,7 +193,7 @@ SC.imageQueue = SC.Object.create(/** @scope SC.imageQueue.prototype */ {
     automatically when the queue becomes active.
   */
   loadNextImage: function() {
-    var entry = null, queue;
+    var queue, entry, img;
 
     // only run if we don't have too many active request...
     if (this.get('activeRequests')>=this.get('loadLimit')) return; 
@@ -207,13 +207,13 @@ SC.imageQueue = SC.Object.create(/** @scope SC.imageQueue.prototype */ {
       queue = this._backgroundQueue ;
       while(queue.length>0 && !entry) entry = queue.shift();
     }
-    this.set('isLoading', !!entry); // update isLoading...
     
     // if we have an entry, then initiate an image load with the proper 
     // callbacks.
-    if (entry) {
+    img = entry ? entry.image : null;
+    if (img) {
+      this.set('isLoaded', YES);
       // var img = (entry.image = new Image()) ;
-      var img = entry.image ;
       img.onabort = this._imageDidAbort ;
       img.onerror = this._imageDidError ;
       img.onload = this._imageDidLoad ;
@@ -226,7 +226,9 @@ SC.imageQueue = SC.Object.create(/** @scope SC.imageQueue.prototype */ {
       // or until load limit is reached.
       this.incrementProperty('activeRequests');
       this.loadNextImage();
-    } 
+    } else {
+      this.set('isLoading', NO);
+    }
   },
   
   // ..........................................................
